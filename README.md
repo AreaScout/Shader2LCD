@@ -24,10 +24,11 @@ some shaders needs textures, there are three examples that uses unique textures 
 the easiest way to check if a shader needs an texture is to just start it without texture path command line argument, if the display 
 stays black you can just add from texl0.jpg to texl2.jpg, except on those three:
 
+```
 DISPLAY=:0.0 ./Shader2LCD shaders/amigademos1.f.glsl textures/texl3.png
 DISPLAY=:0.0 ./Shader2LCD shaders/basicscroll.f.glsl textures/texl3.png
 DISPLAY=:0.0 ./Shader2LCD shaders/sunsurface.f.glsl textures/texl4.png
-
+```
 ## See also
 
 [ODROID Forum](https://forum.odroid.com/viewtopic.php?f=156&t=30979&p=223798#p223798)

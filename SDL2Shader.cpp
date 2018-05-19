@@ -305,7 +305,6 @@ int main(int argc, char *argv[])
 	SDL_RendererInfo info;
 	int drv_index = -1;
 	char rendername[256] = {0};
-	char fps[10] = {0};
 	uint32_t rmask16 = 0x0000f800, gmask16 = 0x000007e0, bmask16 = 0x0000001f, amask16 = 0x00000000;
 	int fd;
 	int pxlength;
@@ -376,6 +375,8 @@ int main(int argc, char *argv[])
 		usleep(40000); // try to keep roughly 25fps 
 		SDL_FreeSurface(fbdev_surface);
 	}
+
+	SDL_Quit();
 
 	return 0;
 }

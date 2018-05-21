@@ -319,7 +319,7 @@ int main(int argc, char *argv[])
 
 	window = SDL_CreateWindow("Shader2LCD", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 320, 240, SDL_WINDOW_OPENGL | SDL_WINDOW_MINIMIZED | SDL_WINDOW_BORDERLESS | SDL_WINDOW_HIDDEN);
 	if (!window) {
-		fprintf(stderr, "Error: failed to create window.\n");
+		fprintf(stderr, "Error: failed to create window: %s\n", SDL_GetError());
 		return -1;
 	}
 

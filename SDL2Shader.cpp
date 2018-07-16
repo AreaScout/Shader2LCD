@@ -4,15 +4,18 @@
 #include <iostream>
 #include <ctime>
 #include <SOIL/SOIL.h>
+#include <string>
+#include <sys/time.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+
+#define GL_GLEXT_PROTOTYPES 1
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengles2.h>
 #include <GLES3/gl3.h>
 #include <GLES3/gl31.h>
 #include <GLES3/gl3ext.h>
-#include <string>
-#include <sys/time.h>
-#include <fcntl.h>
-#include <sys/mman.h>
 
 std::string _fragmentShader;
 std::string _textureName;

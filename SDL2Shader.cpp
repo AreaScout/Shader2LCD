@@ -28,10 +28,15 @@ GLuint      _program;
 GLint       _attribute_coord2d;
 bool bIsRunning;
 
+#if !defined(NATIVE)
+const int width  = 320, height = 240;
 uint32_t rmask = 0x00ff0000, gmask = 0x0000ff00, bmask = 0x000000ff, amask = 0xff000000;
 uint8_t *fbp = NULL;
-uint8_t buffer[320 * 240 * 4] = {0};
+uint8_t buffer[width * height * 4] = {0};
 SDL_Surface *fbdev_surface = NULL;
+#else
+int width = 0, height = 0;
+#endif
 
 typedef GLubyte* (APIENTRY * glGetString_Func)(unsigned int);
 glGetString_Func glGetStringAPI = NULL;
@@ -229,7 +234,7 @@ void paintGL()
 	glUniform1f(unif_time, deltaTimeS);  
 
 	unif_resolution = glGetUniformLocation(_program, "resolution");
-	glUniform2f(unif_resolution, 320.0f, 240.0f);
+	glUniform2f(unif_resolution, (float)width, (float)height);
 
 	unif_date = glGetUniformLocation(_program, "iDate");
 	time_t now = time(NULL);
@@ -268,6 +273,7 @@ void paintGL()
 
 	glDisableVertexAttribArray(_attribute_coord2d);
 
+#if !defined(NATIVE)
 	glReadBuffer(GL_COLOR_ATTACHMENT0);
 	glPixelStorei(GL_PACK_ALIGNMENT, 4);
 	glPixelStorei(GL_PACK_ROW_LENGTH, 0);
@@ -275,7 +281,9 @@ void paintGL()
 	glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
 	glReadPixels(0, 0, 320, 240, GL_BGRA_EXT, GL_UNSIGNED_BYTE, &buffer);
 
-    fbdev_surface = SDL_CreateRGBSurfaceFrom(buffer, 320, 240, 32, 1280, rmask, gmask, bmask, amask);
+	fbdev_surface = SDL_CreateRGBSurfaceFrom(buffer, 320, 240, 32, 1280, rmask, gmask, bmask, amask);
+#endif
+
 }
 
 SDL_Surface* flip_vertical(SDL_Surface* sfc) {
@@ -320,7 +328,17 @@ int main(int argc, char *argv[])
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
-	window = SDL_CreateWindow("Shader2LCD", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 320, 240, SDL_WINDOW_OPENGL | SDL_WINDOW_MINIMIZED | SDL_WINDOW_BORDERLESS | SDL_WINDOW_HIDDEN);
+#if defined(NATIVE)
+	SDL_DisplayMode mode;
+	if (SDL_GetDesktopDisplayMode(0, &mode) != 0) {
+		fprintf(stderr, "SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
+		exit(EXIT_FAILURE);
+	}
+	width  = mode.w;
+	height = mode.h;
+#endif
+
+	window = SDL_CreateWindow("Shader2LCD", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_MINIMIZED | SDL_WINDOW_BORDERLESS | SDL_WINDOW_HIDDEN);
 	if (!window) {
 		fprintf(stderr, "Error: failed to create window: %s\n", SDL_GetError());
 		return -1;
@@ -345,7 +363,8 @@ int main(int argc, char *argv[])
 	fprintf(stdout, "Extensions : %s\n", glGetStringAPI(GL_EXTENSIONS));
 	
 	initializeGL();
-	
+
+#if !defined(NATIVE)
 	if ((fd = open("/dev/fb1", O_RDWR)) < 0) {
 		perror("can't open device");
 		abort();
@@ -357,6 +376,7 @@ int main(int argc, char *argv[])
 
 	SDL_Surface *surface = SDL_CreateRGBSurface(0, 320, 240, 2 * 8, rmask16, gmask16, bmask16, amask16);
 	SDL_Surface *surface_tmp = NULL;
+#endif
 	
 	SDL_Event event;
 	while (!terminate) {
@@ -368,7 +388,7 @@ int main(int argc, char *argv[])
 		}
 
 		paintGL();
-
+#if !defined(NATIVE)
 		SDL_BlitSurface((surface_tmp = flip_vertical(fbdev_surface)), NULL, surface, NULL);
 		SDL_FreeSurface(surface_tmp);
 		unsigned char *pixels = (unsigned char*)surface->pixels;
@@ -377,6 +397,10 @@ int main(int argc, char *argv[])
 		}
 		usleep(40000); // try to keep roughly 25fps 
 		SDL_FreeSurface(fbdev_surface);
+#else
+		usleep(33333); // try to keep roughly 30fps
+		SDL_GL_SwapWindow(window);
+#endif
 	}
 
 	SDL_Quit();

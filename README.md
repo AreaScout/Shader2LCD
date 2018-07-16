@@ -9,15 +9,16 @@ An SDL2 port of oShaderToy that Displays GPU Shaders onto the OGST Gaming Kit LC
 $ sudo apt-get install libsoil-dev libsdl2-dev
 $ git clone https://github.com/AreaScout/Shader2LCD.git
 $ cd Shader2LCD
-$ ./build
+$ make -j7
+$ sudo make install
 ```
 
 ## Usage
 
-The tool will create a dummy X11 window, therefor if you start it from terminal you should add the DISPLAY prefix
+If you run this application under X11 you should add the DISPLAY prefix or set it as an environment variable
 
 ```
-$ DISPLAY=:0.0 ./Shader2LCD shaders/relentless.f.glsl
+$ DISPLAY=:0.0 Shader2LCD shaders/relentless.f.glsl
 ```
 
 some shaders needs textures, there are three examples that uses unique textures all others you can just choose from texl0.jpg - texl2.jpg
@@ -25,9 +26,9 @@ the easiest way to check if a shader needs an texture is to just start it withou
 stays black you can just add from texl0.jpg to texl2.jpg, except on those three:
 
 ```
-DISPLAY=:0.0 ./Shader2LCD shaders/amigademos1.f.glsl textures/texl3.png
-DISPLAY=:0.0 ./Shader2LCD shaders/basicscroll.f.glsl textures/texl3.png
-DISPLAY=:0.0 ./Shader2LCD shaders/sunsurface.f.glsl textures/texl4.png
+Shader2LCD shaders/amigademos1.f.glsl textures/texl3.png
+Shader2LCD shaders/basicscroll.f.glsl textures/texl3.png
+Shader2LCD shaders/sunsurface.f.glsl textures/texl4.png
 ```
 ## See also
 

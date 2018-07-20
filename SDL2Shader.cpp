@@ -398,7 +398,6 @@ int main(int argc, char *argv[])
 		usleep(40000); // try to keep roughly 25fps 
 		SDL_FreeSurface(fbdev_surface);
 #else
-		usleep(33333); // try to keep roughly 30fps
 		SDL_GL_SwapWindow(window);
 #endif
 	}

@@ -1,4 +1,4 @@
-![Shader2LCD](http://www.hardkernel.com/main/_Files/prdt/2018/201805/201805120009102637.jpg)
+![Shader2LCD](https://www.hardkernel.com/main/_Files/prdt/2018/201805/201805120009102637.jpg)
 
 # Shader2LCD
 An SDL2 port of oShaderToy that Displays GPU Shaders onto the OGST Gaming Kit LCD 

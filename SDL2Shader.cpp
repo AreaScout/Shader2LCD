@@ -15,7 +15,6 @@
 #include <SDL2/SDL_opengles2.h>
 #include <GLES3/gl3.h>
 #include <GLES3/gl31.h>
-#include <GLES3/gl3ext.h>
 
 std::string _fragmentShader;
 std::string _textureName;

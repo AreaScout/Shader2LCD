@@ -337,7 +337,11 @@ int main(int argc, char *argv[])
 	height = mode.h;
 #endif
 
+#if defined(NATIVE)
+	window = SDL_CreateWindow("Shader2LCD", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP);
+#else
 	window = SDL_CreateWindow("Shader2LCD", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_MINIMIZED | SDL_WINDOW_BORDERLESS | SDL_WINDOW_HIDDEN);
+#endif
 	if (!window) {
 		fprintf(stderr, "Error: failed to create window: %s\n", SDL_GetError());
 		return -1;
@@ -356,10 +360,11 @@ int main(int argc, char *argv[])
 	}
 
 	fprintf(stdout, "Available Renderers: %s\n", rendername);
-	fprintf(stdout, "Vendor     : %s\n", glGetStringAPI(GL_VENDOR));
-	fprintf(stdout, "Renderer   : %s\n", glGetStringAPI(GL_RENDERER));
-	fprintf(stdout, "Version    : %s\n", glGetStringAPI(GL_VERSION));
-	fprintf(stdout, "Extensions : %s\n", glGetStringAPI(GL_EXTENSIONS));
+	fprintf(stdout, "Vendor       : %s\n", glGetStringAPI(GL_VENDOR));
+	fprintf(stdout, "Renderer     : %s\n", glGetStringAPI(GL_RENDERER));
+	fprintf(stdout, "Version      : %s\n", glGetStringAPI(GL_VERSION));
+	fprintf(stdout, "GLSL Version : %s\n", glGetStringAPI(GL_SHADING_LANGUAGE_VERSION));
+	fprintf(stdout, "Extensions   : %s\n", glGetStringAPI(GL_EXTENSIONS));
 	
 	initializeGL();
 

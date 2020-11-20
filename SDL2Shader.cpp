@@ -105,7 +105,7 @@ GLuint create_shader(const char* filename, GLenum type)
 	GLuint res = glCreateShader(type);
 	const GLchar* sources[] = {
 		// Define GLSL version
-		"#version 100\n"
+		"#version 300 es\n"
 		,
 		// GLES2 precision specifiers
 		// Define default float precision for fragment shaders:
@@ -184,8 +184,11 @@ void initializeGL()
 	
 	// load texture if specified
 	if (_textureName != "") {
-		_texture0 = SOIL_load_OGL_texture(_textureName.c_str(),	SOIL_LOAD_AUTO,	SOIL_CREATE_NEW_ID,	SOIL_FLAG_MIPMAPS);
-	
+#if !defined(NATIVE)
+		_texture0 = SOIL_load_OGL_texture(_textureName.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+#else
+		_texture0 = SOIL_load_OGL_texture(_textureName.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+#endif
 		/* check for an error during the load process */
 		if( 0 == _texture0 ) {
 			printf( "SOIL loading error: '%s' '%s'\n", SOIL_last_result(), _textureName.c_str() );
@@ -323,7 +326,7 @@ int main(int argc, char *argv[])
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 1);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 

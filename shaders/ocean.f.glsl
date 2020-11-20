@@ -11,7 +11,9 @@ precision highp float;
 uniform vec2 resolution;
 uniform float time;
 uniform sampler2D tex0;
-uniform sampler2D tex1; 
+uniform sampler2D tex1;
+
+out vec4 fragColor;
  
 const int NUM_STEPS = 8;
 const float PI	 	= 3.141592;
@@ -189,5 +191,5 @@ void main() {
     	pow(smoothstep(0.0,-0.05,dir.y),0.3));
         
     // post
-	gl_FragColor = vec4(pow(color,vec3(0.75)), 1.0);
+	fragColor = vec4(pow(color,vec3(0.75)), 1.0);
 }

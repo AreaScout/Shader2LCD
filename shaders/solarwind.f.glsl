@@ -17,6 +17,8 @@ uniform float time;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
 
+out vec4 fragColor;
+
 //--------------------------------------------------------------------
 // Shader      : PhyroclasticFireball 
 // see also    : https://www.shadertoy.com/view/MtXSzS
@@ -260,5 +262,5 @@ void main()
   p.x *= resolution.x / resolution.y;
   vec3 color1 = fireball(p);
   vec3 color2 = burn(p);
-  gl_FragColor = vec4( mix(color1, color2, 0.7), 1.0);
+  fragColor = vec4( mix(color1, color2, 0.7), 1.0);
 }

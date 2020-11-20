@@ -1,8 +1,9 @@
 uniform vec2 resolution;
+out vec4 fragColor;
 
 void main(void) {
-  gl_FragColor[0] = gl_FragCoord.x / resolution.x;
-  gl_FragColor[1] = gl_FragCoord.y / resolution.y;
-  gl_FragColor[2] = 0.5;
-  gl_FragColor[3] = 1.0;
+  fragColor[0] = gl_FragCoord.x / resolution.x;
+  fragColor[1] = gl_FragCoord.y / resolution.y;
+  fragColor[2] = 0.5;
+  fragColor[3] = 1.0;
 }

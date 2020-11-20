@@ -7,6 +7,8 @@ precision highp float;
 uniform vec2 resolution;
 uniform float time;
 
+out vec4 fragColor;
+
 float segm( float a, float b, float c, float x )
 {
     return smoothstep(a-c,a,x) - smoothstep(b,b+c,x);
@@ -88,7 +90,7 @@ void main(void)
     col *= heart( -1.0+2.0*p.x, 1.0+2.0*p.y );
     col *= sun( -1.0+2.0*p.x, -1.0+2.0*p.y );
     col *= clover( 1.0+2.0*p.x, -1.0+2.0*p.y );
-    gl_FragColor = vec4(col,1.0);
+    fragColor = vec4(col,1.0);
 
 }
 

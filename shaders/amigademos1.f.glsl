@@ -25,6 +25,8 @@ uniform float time;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
 
+out vec4 fragColor;
+
 float _time = 0.0;
 bool mousePressed = false;
 vec2 pos = vec2(0);      //  0 .. 1
@@ -577,5 +579,5 @@ void main()
   aColor = ScrollText1();
   aColor = ScrollText2();
 
-  gl_FragColor = vec4(aColor, 1.0);
+  fragColor = vec4(aColor, 1.0);
 }

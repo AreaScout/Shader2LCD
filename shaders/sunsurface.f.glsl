@@ -17,6 +17,7 @@ uniform float time;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
 
+out vec4 fragColor;
 
 // IQ's noise
 float pn( in vec3 p )
@@ -186,5 +187,5 @@ void main()
    tc *= 1. / exp( ld * 2.82 ) * 1.05;
    #endif
     
-   gl_FragColor = vec4(tc, 1.0);
+   fragColor = vec4(tc, 1.0);
 }

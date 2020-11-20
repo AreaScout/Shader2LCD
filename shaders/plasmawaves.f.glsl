@@ -7,6 +7,8 @@ uniform float time;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
 
+out vec4 fragColor;
+
 const float overallSpeed = 0.2;
 const float gridSmoothWidth = 0.015;
 const float axisWidth = 0.05;
@@ -97,10 +99,10 @@ void main(void)
         lines += line * lineColor * rand;
     }
 
-    gl_FragColor = mix(lineColor * 0.5, lineColor - vec4(0.2, 0.2, 0.7, 1), uv.x);
-    gl_FragColor *= verticalFade;
-    gl_FragColor.a = 1.0;
+    fragColor = mix(lineColor * 0.5, lineColor - vec4(0.2, 0.2, 0.7, 1), uv.x);
+    fragColor *= verticalFade;
+    fragColor.a = 1.0;
     // debug grid:
     //fragColor = mix(fragColor, gridColor, drawGrid(space));
-    gl_FragColor += lines;
+    fragColor += lines;
 }

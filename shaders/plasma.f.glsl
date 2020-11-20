@@ -7,6 +7,8 @@ uniform float time;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
 
+out vec4 fragColor;
+
 const float PI = 3.14159265;
 
 
@@ -27,5 +29,5 @@ void main(void ) {
 	float green	= (sin(PI*color/0.5+time*3.0)+1.0)/2.0;
 	float blue	= (sin(+time*3.0)+1.0)/2.0;
 	
-    gl_FragColor = vec4(red, green, blue, 1.0);
+    fragColor = vec4(red, green, blue, 1.0);
 }

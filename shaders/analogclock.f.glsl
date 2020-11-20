@@ -25,6 +25,8 @@ uniform sampler2D tex0;
 uniform sampler2D tex1;
 uniform vec4 iDate;
 
+out vec4 fragColor;
+
 // from https://www.shadertoy.com/view/4s3XDn <3
 float ln(vec2 p, vec2 a, vec2 b)
 {
@@ -151,5 +153,5 @@ void main()
     }
     
     
-    gl_FragColor = color;
+    fragColor = color;
 }

@@ -8,6 +8,8 @@ uniform sampler2D tex0;
 uniform sampler2D tex1;
 uniform vec4 iDate;
 
+out vec4 fragColor;
+
 #define iResolution resolution
 #define iTime time
 
@@ -66,7 +68,7 @@ void main()
     uv.x -= 5.+uv.y*.07;
 
     if (uv.x<-10.0 || uv.x>0.0 || abs(uv.y)>1.2) {
-        gl_FragColor = vec4(0.);
+        fragColor = vec4(0.);
     	return;
     }
     
@@ -82,5 +84,5 @@ void main()
 		seg = dots(uv);
     }
 	
-    gl_FragColor = vec4(seg,0.,0.,1.);
+    fragColor = vec4(seg,0.,0.,1.);
 }

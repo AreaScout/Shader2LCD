@@ -11,6 +11,8 @@ uniform float time;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
 
+out vec4 fragColor;
+
 float snoise(vec3 uv, float res)	// by trisomie21
 {
 	const vec3 s = vec3(1e0, 1e2, 1e4);
@@ -93,7 +95,7 @@ void main(void)
 	}
 	
 	float starGlow	= min( max( 1.0 - dist * ( 1.0 - brightness ), 0.0 ), 1.0 );
-	//gl_FragColor.rgb	= vec3( r );
-	gl_FragColor.rgb	= vec3( f * ( 0.75 + brightness * 0.3 ) * orange ) + starSphere + corona * orange + starGlow * orangeRed;
-	gl_FragColor.a		= 1.0;
+	//fragColor.rgb	= vec3( r );
+	fragColor.rgb	= vec3( f * ( 0.75 + brightness * 0.3 ) * orange ) + starSphere + corona * orange + starGlow * orangeRed;
+	fragColor.a		= 1.0;
 }

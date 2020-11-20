@@ -8,6 +8,8 @@ uniform float time;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
 
+out vec4 fragColor;
+
 void main(void)
 {
     vec2 p = -1.0 + 2.0 * gl_FragCoord.xy / resolution.xy;
@@ -52,7 +54,7 @@ void main(void)
     co = co + 1.0 - log2(.5*log2(m2));
 
     co = sqrt(co/256.0);
-    gl_FragColor = vec4( .5+.5*cos(6.2831*co+0.0),
+    fragColor = vec4( .5+.5*cos(6.2831*co+0.0),
                          .5+.5*cos(6.2831*co+0.4),
                          .5+.5*cos(6.2831*co+0.7),
                          1.0 );

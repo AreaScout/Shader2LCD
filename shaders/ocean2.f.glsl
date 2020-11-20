@@ -16,6 +16,8 @@ uniform float time;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
 
+out vec4 fragColor;
+
 const float kSensorWidth = 36e-3;
 const float kFocalLength = 18e-3;
 
@@ -255,5 +257,5 @@ void main()
     
     // Color grading
     color = smoothstep(0.3, 0.8, color);
-	gl_FragColor = vec4(color, 1.0);
+	fragColor = vec4(color, 1.0);
 }

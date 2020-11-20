@@ -15,6 +15,8 @@ uniform float time;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
 
+out vec4 fragColor;
+
 // various noise functions
 float Hash2d(vec2 uv)
 {
@@ -134,5 +136,5 @@ void main()
 	vec3 finalColor = vec3(0.01,0.1,1.0)* density*0.2;
 
 	// output the final color with sqrt for "gamma correction"
-	gl_FragColor = vec4(sqrt(clamp(finalColor, 0.0, 1.0)),1.0);
+	fragColor = vec4(sqrt(clamp(finalColor, 0.0, 1.0)),1.0);
 }

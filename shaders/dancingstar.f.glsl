@@ -7,6 +7,8 @@ uniform float time;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
 
+out vec4 fragColor;
+
 void main()
 #define r resolution.xy
 #define t time
@@ -17,5 +19,5 @@ void main()
     uv.x*=r.x/r.y;
     float l = length(uv+d)*3.0125*(2.0*uv.y+1.0);
     l=l;
-    gl_FragColor = vec4(0.25/l,0.4/l,0.5/l,1.0);
+    fragColor = vec4(0.25/l,0.4/l,0.5/l,1.0);
 }

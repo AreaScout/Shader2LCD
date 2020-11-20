@@ -7,6 +7,8 @@ uniform float time;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
 
+out vec4 fragColor;
+
 const vec3 top = vec3(0.318, 0.831, 1.0);
 const vec3 bottom = vec3(0.094, 0.141, 0.424);
 const float widthFactor = 1.5;
@@ -52,5 +54,5 @@ void main()
     color += calcSine(uv, 1.0, 0.46, 0.07, 0.0, 0.3, vec3(0.3, 0.3, 0.3), 0.05, 23.0,true);
     color += calcSine(uv, 0.4, 0.58, 0.05, 0.0, 0.3, vec3(0.3, 0.3, 0.3), 0.2, 15.0,true);
 
-    gl_FragColor = vec4(color,1.0);
+    fragColor = vec4(color,1.0);
 }

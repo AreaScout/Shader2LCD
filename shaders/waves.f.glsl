@@ -7,6 +7,8 @@ uniform float time;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
 
+out vec4 fragColor;
+
 vec3 COLOR1 = vec3(0.0, 0.0, 0.3);
 vec3 COLOR2 = vec3(0.5, 0.0, 0.0);
 float BLOCK_WIDTH = 0.01;
@@ -45,5 +47,5 @@ void main(void)
 	final_color = bg_color + wave_color;
 	
 	
-	gl_FragColor = vec4(final_color, 1.0);
+	fragColor = vec4(final_color, 1.0);
 }

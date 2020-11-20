@@ -7,6 +7,8 @@ uniform float time;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
 
+out vec4 fragColor;
+
 void main(void)
 {
     vec2 iResolution = resolution;
@@ -27,5 +29,5 @@ void main(void)
 	h = 0.1 + h;
     vec3 col = mix( bcol, 1.2*vec3(0.6*h,0.2+0.5*h,0.0), f );
 
-    gl_FragColor = vec4( col, 1.0 );
+    fragColor = vec4( col, 1.0 );
 }

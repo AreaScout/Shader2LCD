@@ -7,6 +7,8 @@ uniform float time;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
 
+out vec4 fragColor;
+
 #define SCROLL_SPEED 7.0
 #define FONT_SIZE 0.40
 #define SIN_AMP 1.5
@@ -43,5 +45,5 @@ void main()
 	vec2 uv = (gl_FragCoord.xy / resolution.y*2.-1.) / FONT_SIZE;
     uv.x+=-4.+mod(time*SCROLL_SPEED,SCROLL_LEN);
     uv.y+=0.5+SIN_AMP*sin(uv.x*SIN_FREQ+time*SIN_SPEED);
-    gl_FragColor = (Scroll(uv)==COLOR) ? vec4(gl_FragCoord.xy/resolution.xy,0.5+0.5*sin(time),1.0) : vec4(0);
+    fragColor = (Scroll(uv)==COLOR) ? vec4(gl_FragCoord.xy/resolution.xy,0.5+0.5*sin(time),1.0) : vec4(0);
 }

@@ -9,6 +9,8 @@ uniform vec4 mouse;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
 
+out vec4 fragColor;
+
 void main(void)
 {
     vec2 uv;
@@ -27,6 +29,6 @@ void main(void)
 
     vec3 col =  texture2D(tex0,uv).xyz;
 
-    gl_FragColor = vec4(col*w,1.0);
+    fragColor = vec4(col*w,1.0);
 }
 

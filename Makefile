@@ -1,6 +1,6 @@
 #Shader2LCD Makefile
 CXX = g++
-CXXFLAGS = -mfloat-abi=hard -marm -mtune=cortex-a15.cortex-a7 -mcpu=cortex-a15
+#CXXFLAGS = -mfloat-abi=hard -marm -mtune=cortex-a15.cortex-a7 -mcpu=cortex-a15
 
 ifeq ($(PREFIX),)
     PREFIX := /usr/local

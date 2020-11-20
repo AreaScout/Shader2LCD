@@ -38,6 +38,8 @@ uniform float time;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
 
+out vec4 fragColor;
+
 // Cheap vec3 to vec3 hash. Works well enough, but there are other ways.
 vec3 hash33(vec3 p){ 
     
@@ -165,7 +167,7 @@ void main() {
     
 
 	// Presenting the color to the screen.
-	gl_FragColor = vec4( clamp(col, 0., 1.), 1.0 );
+	fragColor = vec4( clamp(col, 0., 1.), 1.0 );
     
      
  }

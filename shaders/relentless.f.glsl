@@ -28,6 +28,8 @@ uniform float time;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
 
+out vec4 fragColor;
+
 vec2 rotate(vec2 p, float a)
 {
 	return vec2(p.x * cos(a) - p.y * sin(a), p.x * sin(a) + p.y * cos(a));
@@ -265,5 +267,5 @@ void main()
 	vec3 col = pow(vec3(inten), 1.5 * vec3(0.15, 2.0, 9.0));
 #endif
 	
-	gl_FragColor = vec4(col, 1.0);
+	fragColor = vec4(col, 1.0);
 }

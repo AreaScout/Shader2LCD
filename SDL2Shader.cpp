@@ -25,7 +25,6 @@ GLuint      _texture0;
 GLuint      _vbo_quad;
 GLuint      _program;
 GLint       _attribute_coord2d;
-bool bIsRunning;
 
 #if !defined(NATIVE)
 const int width  = 320, height = 240;
@@ -202,7 +201,6 @@ void initializeGL()
 	
 	// Start timer
 	gettimeofday(&_startTime, NULL);
-	bIsRunning = false;
 }
 
 float getDeltaTimeS()

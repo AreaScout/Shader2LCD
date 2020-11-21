@@ -8,6 +8,7 @@
 #include <sys/time.h>
 #include <fcntl.h>
 #include <sys/mman.h>
+#include <algorithm>
 
 #define GL_GLEXT_PROTOTYPES 1
 
@@ -25,6 +26,8 @@ GLuint      _texture0;
 GLuint      _vbo_quad;
 GLuint      _program;
 GLint       _attribute_coord2d;
+
+bool bInvertY = false;
 
 #if !defined(NATIVE)
 const int width  = 320, height = 240;
@@ -186,7 +189,7 @@ void initializeGL()
 #if !defined(NATIVE)
 		_texture0 = SOIL_load_OGL_texture(_textureName.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 #else
-		_texture0 = SOIL_load_OGL_texture(_textureName.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y);
+		_texture0 = SOIL_load_OGL_texture(_textureName.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, bInvertY ? SOIL_FLAG_MIPMAPS : (SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y));
 #endif
 		/* check for an error during the load process */
 		if( 0 == _texture0 ) {
@@ -300,6 +303,11 @@ SDL_Surface* flip_vertical(SDL_Surface* sfc) {
 	return result;
 }
 
+bool cmdOptionExists(char** begin, char** end, const std::string& option)
+{
+	return std::find(begin, end, option) != end;
+}
+
 int main(int argc, char *argv[])
 {
 	bool terminate = false;
@@ -309,7 +317,16 @@ int main(int argc, char *argv[])
 
 	if (argc >= 3)
 		_textureName = argv[2];
-	
+
+	if (cmdOptionExists(argv, argv+argc, "-h") || cmdOptionExists(argv, argv+argc, "--help")) {
+		fprintf(stdout, "Usage: %s [OPTION]...\n\t-i, --invert-y\tinvert y texture coordinate\n\t-h, --help\tdisplay this help and exit\n", argv[0]);
+		return 0;
+	}
+
+	if (cmdOptionExists(argv, argv+argc, "-i") || cmdOptionExists(argv, argv+argc, "--invert-y")) {
+		bInvertY = true;
+	}
+
 	SDL_Init(SDL_INIT_VIDEO);
 
 	SDL_Window* window = NULL;

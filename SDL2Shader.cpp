@@ -28,6 +28,7 @@ GLuint      _program;
 GLint       _attribute_coord2d;
 
 bool bInvertY = false;
+bool bNeedsUpload = true;
 
 #if !defined(NATIVE)
 const int width  = 320, height = 240;
@@ -250,13 +251,16 @@ void paintGL()
 
 	glUniform4f(unif_date, year, month, day, sec);
 
-	unif_tex0 = glGetUniformLocation(_program, "tex0");
-	if (unif_tex0 != -1) {
-		if (_texture0 != 0) {
-			glUniform1i(unif_tex0, 0);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, _texture0);
+	if (bNeedsUpload) {
+		unif_tex0 = glGetUniformLocation(_program, "tex0");
+		if (unif_tex0 != -1) {
+			if (_texture0 != 0) {
+				glUniform1i(unif_tex0, 0);
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, _texture0);
+			}
 		}
+		bNeedsUpload = false;
 	}
 
 	/* Describe our vertices array to OpenGL */
@@ -336,7 +340,7 @@ int main(int argc, char *argv[])
 	uint32_t rmask16 = 0x0000f800, gmask16 = 0x000007e0, bmask16 = 0x0000001f, amask16 = 0x00000000;
 	int fd;
 	int pxlength;
-	
+
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 1);

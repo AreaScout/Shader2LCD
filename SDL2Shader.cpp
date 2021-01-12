@@ -47,11 +47,11 @@ char* file_read(const char* filename)
 {
 	FILE* in = fopen(filename, "rb");
 	if (in == NULL) return NULL;
-	
+
 	int res_size = BUFSIZ;
 	char* res = (char*)malloc(res_size);
 	int nb_read_total = 0;
-	
+
 	while (!feof(in) && !ferror(in)) {
 		if (nb_read_total + BUFSIZ > res_size) {
 			if (res_size > 10*1024*1024) break;
@@ -61,11 +61,11 @@ char* file_read(const char* filename)
 		char* p_res = res + nb_read_total;
 		nb_read_total += fread(p_res, 1, BUFSIZ, in);
 	}
-	
+
 	fclose(in);
 	res = (char*)realloc(res, nb_read_total + 1);
 	res[nb_read_total] = '\0';
-	
+
 	return res;
 }
 
@@ -83,14 +83,14 @@ void print_log(GLuint object)
 		fprintf(stderr, "printlog: Not a shader or a program\n");
 		return;
 	}
-	
+
 	char* log = (char*)malloc(log_length);
-	
+
 	if (glIsShader(object))
 	glGetShaderInfoLog(object, log_length, NULL, log);
 	else if (glIsProgram(object))
 	glGetProgramInfoLog(object, log_length, NULL, log);
-	
+
 	fprintf(stderr, "%s", log);
 	free(log);
 }
@@ -123,7 +123,7 @@ GLuint create_shader(const char* filename, GLenum type)
 		source };
 		glShaderSource(res, 3, sources, NULL);
 		free((void*)source);
-		
+
 		glCompileShader(res);
 		GLint compile_ok = GL_FALSE;
 		glGetShaderiv(res, GL_COMPILE_STATUS, &compile_ok);
@@ -133,7 +133,7 @@ GLuint create_shader(const char* filename, GLenum type)
 		glDeleteShader(res);
 		return 0;
 	}
-	
+
 	return res;
 }
 
@@ -151,7 +151,7 @@ int init_resources()
 	glGenBuffers(1, &_vbo_quad);
 	glBindBuffer(GL_ARRAY_BUFFER, _vbo_quad);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_vertices), triangle_vertices, GL_STATIC_DRAW);
-	
+
 	GLint link_ok = GL_FALSE;
 
 	GLuint vs, fs;
@@ -159,7 +159,7 @@ int init_resources()
 	if (_fragmentShader != "") {
 		if ((fs = create_shader(_fragmentShader.c_str(), GL_FRAGMENT_SHADER)) == 0) return 0;
 	} else if ((fs = create_shader("shaders/triangle.f.glsl", GL_FRAGMENT_SHADER)) == 0) return 0;
-	
+
 	_program = glCreateProgram();
 	glAttachShader(_program, vs);
 	glAttachShader(_program, fs);
@@ -170,7 +170,7 @@ int init_resources()
 		print_log(_program);
 		return 0;
 	}
-	
+
 	const char* attribute_name = "coord2d";
 	_attribute_coord2d = glGetAttribLocation(_program, attribute_name);
 	if (_attribute_coord2d == -1) {
@@ -184,7 +184,7 @@ int init_resources()
 void initializeGL()
 {
 	init_resources();
-	
+
 	// load texture if specified
 	if (_textureName != "") {
 #if !defined(NATIVE)
@@ -197,12 +197,12 @@ void initializeGL()
 			printf( "SOIL loading error: '%s' '%s'\n", SOIL_last_result(), _textureName.c_str() );
 		} else {
 			glEnable(GL_TEXTURE_2D);
-		}	 
+		}
 	}
-	
+
 	// set the clear colour
 	glClearColor(1, 1, 1, 1);
-	
+
 	// Start timer
 	gettimeofday(&_startTime, NULL);
 }
@@ -373,7 +373,7 @@ int main(int argc, char *argv[])
 	SDL_GL_MakeCurrent(window, ctx);
 
 	glGetStringAPI = (glGetString_Func)SDL_GL_GetProcAddress("glGetString");
-	
+
 	for (int it = 0; it < SDL_GetNumRenderDrivers(); ++it) {
 		SDL_GetRenderDriverInfo(it, &info);
 
@@ -387,23 +387,23 @@ int main(int argc, char *argv[])
 	fprintf(stdout, "Version      : %s\n", glGetStringAPI(GL_VERSION));
 	fprintf(stdout, "GLSL Version : %s\n", glGetStringAPI(GL_SHADING_LANGUAGE_VERSION));
 	fprintf(stdout, "Extensions   : %s\n", glGetStringAPI(GL_EXTENSIONS));
-	
+
 	initializeGL();
 
 #if !defined(NATIVE)
 	if ((fd = open("/dev/fb1", O_RDWR)) < 0) {
 		perror("can't open device");
 		abort();
-	}	
-	
+	}
+
 	pxlength = 320 * 240 * 2;
-	
+
 	fbp = (uint8_t*)mmap(0, pxlength, PROT_READ | PROT_WRITE, MAP_SHARED, fd, (off_t)0);
 
 	SDL_Surface *surface = SDL_CreateRGBSurface(0, 320, 240, 2 * 8, rmask16, gmask16, bmask16, amask16);
 	SDL_Surface *surface_tmp = NULL;
 #endif
-	
+
 	SDL_Event event;
 	while (!terminate) {
 		while (SDL_PollEvent(&event)) {

@@ -371,6 +371,7 @@ int main(int argc, char *argv[])
 
 	SDL_GLContext ctx = SDL_GL_CreateContext(window);
 	SDL_GL_MakeCurrent(window, ctx);
+	SDL_GL_SetSwapInterval(1);
 
 	glGetStringAPI = (glGetString_Func)SDL_GL_GetProcAddress("glGetString");
 

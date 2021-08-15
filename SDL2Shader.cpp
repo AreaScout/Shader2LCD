@@ -297,7 +297,7 @@ SDL_Surface* flip_vertical(SDL_Surface* sfc) {
 	SDL_Surface* result = SDL_CreateRGBSurface(sfc->flags, sfc->w, sfc->h, sfc->format->BytesPerPixel * 8, sfc->format->Rmask, sfc->format->Gmask, sfc->format->Bmask, sfc->format->Amask);
 	int pitch = sfc->pitch;
 	int pxlength = pitch * sfc->h;
-	unsigned char *pixels  = (unsigned char*)sfc->pixels + pxlength;
+	unsigned char *pixels  = (unsigned char*)sfc->pixels + (pxlength - pitch);
 	unsigned char *rpixels = (unsigned char*)result->pixels;
 	for(int line = 0; line < sfc->h; ++line) {
 		memcpy(rpixels, pixels, pitch);

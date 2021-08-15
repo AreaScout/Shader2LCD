@@ -29,15 +29,16 @@ GLint       _attribute_coord2d;
 
 bool bInvertY = false;
 bool bNeedsUpload = true;
+uint32_t rmask = 0x00ff0000, gmask = 0x0000ff00, bmask = 0x000000ff, amask = 0xff000000;
 
 #if !defined(NATIVE)
 const int width  = 320, height = 240;
-uint32_t rmask = 0x00ff0000, gmask = 0x0000ff00, bmask = 0x000000ff, amask = 0xff000000;
 uint8_t *fbp = NULL;
 uint8_t buffer[width * height * 4] = {0};
 SDL_Surface *fbdev_surface = NULL;
 #else
 int width = 0, height = 0;
+SDL_Surface *screenshot_surface = NULL;
 #endif
 
 typedef GLubyte* (APIENTRY * glGetString_Func)(unsigned int);
@@ -411,6 +412,25 @@ int main(int argc, char *argv[])
 			if (event.type == SDL_QUIT) {
 				terminate = true;
 				break;
+			}
+			switch(event.type)
+			{
+				case SDL_MOUSEBUTTONDOWN:
+				case SDL_FINGERDOWN:
+				{
+					uint8_t buffer[width * height * 4] = {0};
+					glReadBuffer(GL_BACK);
+					glPixelStorei(GL_PACK_ALIGNMENT, 4);
+					glPixelStorei(GL_PACK_ROW_LENGTH, 0);
+					glPixelStorei(GL_PACK_SKIP_ROWS, 0);
+					glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
+					glReadPixels(0, 0, width, height, GL_BGRA_EXT, GL_UNSIGNED_BYTE, &buffer);
+					screenshot_surface = SDL_CreateRGBSurfaceFrom(buffer, width, height, 32, width * 4, rmask, gmask, bmask, amask);
+					SDL_SaveBMP(flip_vertical(screenshot_surface), "screenshot.bmp");
+					SDL_FreeSurface(screenshot_surface);
+					fprintf(stdout, "Screenshot saved\n");
+					break;
+				}
 			}
 		}
 

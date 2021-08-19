@@ -41,9 +41,6 @@ int width = 0, height = 0;
 SDL_Surface *screenshot_surface = NULL;
 #endif
 
-typedef GLubyte* (APIENTRY * glGetString_Func)(unsigned int);
-glGetString_Func glGetStringAPI = NULL;
-
 char* file_read(const char* filename)
 {
 	FILE* in = fopen(filename, "rb");
@@ -315,6 +312,7 @@ bool cmdOptionExists(char** begin, char** end, const std::string& option)
 
 int main(int argc, char *argv[])
 {
+	PFNGLGETSTRINGPROC glGetStringAPI = NULL;
 	bool terminate = false;
 
 	if (argc >= 2)
@@ -374,7 +372,7 @@ int main(int argc, char *argv[])
 	SDL_GL_MakeCurrent(window, ctx);
 	SDL_GL_SetSwapInterval(1);
 
-	glGetStringAPI = (glGetString_Func)SDL_GL_GetProcAddress("glGetString");
+	glGetStringAPI = (PFNGLGETSTRINGPROC)SDL_GL_GetProcAddress("glGetString");
 
 	for (int it = 0; it < SDL_GetNumRenderDrivers(); ++it) {
 		SDL_GetRenderDriverInfo(it, &info);

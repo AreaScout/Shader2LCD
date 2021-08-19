@@ -61,7 +61,7 @@ float egg(vec2 p, float ra, float rb) {
 }
 
 vec2 hash(vec2 p) {
-  p = vec2(dot (p, vec2 (127.1, 311.7)), dot (p, vec2 (269.5, 183.3)));
+  p = vec2(dot (p, vec2 (127.1, 311.7)/2.), dot (p, vec2 (269.5, 183.3)/2.));
   return -1. + 2.*fract (sin (p)*43758.5453123);
 }
 
@@ -113,7 +113,7 @@ float noise2(vec2 p) {
 
 
 float height(vec2 p, float dd, int mx) {
-  const float aa   = 0.45;
+  const float aa   = 0.45/1.2;
   const float ff   = 2.03;
   const float tt   = 1.2;
   const float oo   = 3.93;

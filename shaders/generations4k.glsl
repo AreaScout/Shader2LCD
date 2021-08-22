@@ -156,7 +156,7 @@ vec3 getSceneColor(vec3 ro, vec3 rd) {
 
 void main() {
 	// Camera.
-	vec3 ro = vec3(2, 5, -10),
+	vec3 ro = vec3(iMouse.x/64., iMouse.y/50.+2., -10.),
 	     col = vec3(0);
 	ro.yz *= rot(-.2);
 	for (float dx = 0.; dx <= 1.; dx++) {

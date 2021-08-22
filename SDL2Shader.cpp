@@ -29,6 +29,7 @@ GLint       _attribute_coord2d;
 
 bool bInvertY = false;
 bool bNeedsUpload = true;
+float mx = 0., my = 0., mdx = 0., mdy = 0.;
 uint32_t rmask = 0x00ff0000, gmask = 0x0000ff00, bmask = 0x000000ff, amask = 0xff000000;
 
 #if !defined(NATIVE)
@@ -229,7 +230,7 @@ void paintGL()
 
 	// setup fragment shader variables
 	glUseProgram(_program);
-	GLint unif_resolution, unif_time, unif_tex0, unif_date;
+	GLint unif_resolution, unif_time, unif_tex0, unif_date, unif_mouse;
 
 	unif_time = glGetUniformLocation(_program, "time");
 	float deltaTimeS = getDeltaTimeS();
@@ -248,6 +249,10 @@ void paintGL()
 	float sec = (ltm->tm_hour * 60 * 60) + (ltm->tm_min * 60) + ltm->tm_sec;
 
 	glUniform4f(unif_date, year, month, day, sec);
+
+	unif_mouse = glGetUniformLocation(_program, "iMouse");
+
+	glUniform4f(unif_mouse, mx, my, mdx, mdy);
 
 	if (bNeedsUpload) {
 		unif_tex0 = glGetUniformLocation(_program, "tex0");
@@ -314,6 +319,7 @@ int main(int argc, char *argv[])
 {
 	PFNGLGETSTRINGPROC glGetStringAPI = NULL;
 	bool terminate = false;
+	int w = 0, h = 0;
 
 	if (argc >= 2)
 		_fragmentShader = argv[1];
@@ -404,32 +410,96 @@ int main(int argc, char *argv[])
 	SDL_Surface *surface_tmp = NULL;
 #endif
 
-	SDL_Event event;
+	SDL_Event event, touchEvent;
 	while (!terminate) {
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT) {
 				terminate = true;
 				break;
 			}
-			switch(event.type)
-			{
-				case SDL_MOUSEBUTTONDOWN:
-				case SDL_FINGERDOWN:
-				{
-					uint8_t buffer[width * height * 4] = {0};
-					glReadBuffer(GL_BACK);
-					glPixelStorei(GL_PACK_ALIGNMENT, 4);
-					glPixelStorei(GL_PACK_ROW_LENGTH, 0);
-					glPixelStorei(GL_PACK_SKIP_ROWS, 0);
-					glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
-					glReadPixels(0, 0, width, height, GL_BGRA_EXT, GL_UNSIGNED_BYTE, &buffer);
-					screenshot_surface = SDL_CreateRGBSurfaceFrom(buffer, width, height, 32, width * 4, rmask, gmask, bmask, amask);
-					SDL_SaveBMP(flip_vertical(screenshot_surface), "screenshot.bmp");
-					SDL_FreeSurface(screenshot_surface);
-					fprintf(stdout, "Screenshot saved\n");
+#if defined(NATIVE)
+			switch(event.type) {
+				case SDL_KEYDOWN: {
+					switch (event.key.keysym.sym) {
+						case SDLK_p:
+						case SDLK_PRINTSCREEN:
+							uint8_t buffer[width * height * 4] = {0};
+							glReadBuffer(GL_BACK);
+							glPixelStorei(GL_PACK_ALIGNMENT, 4);
+							glPixelStorei(GL_PACK_ROW_LENGTH, 0);
+							glPixelStorei(GL_PACK_SKIP_ROWS, 0);
+							glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
+							glReadPixels(0, 0, width, height, GL_BGRA_EXT, GL_UNSIGNED_BYTE, &buffer);
+							screenshot_surface = SDL_CreateRGBSurfaceFrom(buffer, width, height, 32, width * 4, rmask, gmask, bmask, amask);
+							SDL_SaveBMP(flip_vertical(screenshot_surface), "screenshot.bmp");
+							SDL_FreeSurface(screenshot_surface);
+							fprintf(stdout, "Screenshot saved\n");
+							break;
+					}
+				}
+				case SDL_FINGERMOTION: {
+					SDL_GetWindowSize(window, &w, &h);
+					touchEvent.type = SDL_MOUSEMOTION;
+					touchEvent.motion.type = SDL_MOUSEMOTION;
+					touchEvent.motion.timestamp = event.tfinger.timestamp;
+					touchEvent.motion.windowID = SDL_GetWindowID(window);
+					touchEvent.motion.state = SDL_GetMouseState(NULL, NULL);
+					touchEvent.motion.x = event.tfinger.x * w;
+					touchEvent.motion.y = event.tfinger.y * h;
+					mdx = event.tfinger.dx * w;
+					mdy = event.tfinger.dy * h;
+
+					SDL_WarpMouseInWindow(window, event.tfinger.x * w, event.tfinger.y * h);
+
+					SDL_PushEvent(&touchEvent);
 					break;
 				}
+				case SDL_FINGERDOWN: {
+					SDL_GetWindowSize(window, &w, &h);
+					touchEvent.type = SDL_MOUSEBUTTONDOWN;
+					touchEvent.button.type = SDL_MOUSEBUTTONDOWN;
+					touchEvent.button.timestamp = SDL_GetTicks();
+					touchEvent.button.windowID = SDL_GetWindowID(window);
+					touchEvent.button.button = SDL_BUTTON_LEFT;
+					touchEvent.button.state = SDL_PRESSED;
+					touchEvent.button.clicks = 1;
+					touchEvent.button.x = event.tfinger.x * w;
+					touchEvent.button.y = event.tfinger.y * h;
+
+					touchEvent.motion.type = SDL_MOUSEMOTION;
+					touchEvent.motion.timestamp = SDL_GetTicks();
+					touchEvent.motion.windowID = SDL_GetWindowID(window);
+					touchEvent.motion.x = event.tfinger.x * w;
+					touchEvent.motion.y = event.tfinger.y * h;
+					// Any real mouse cursor should also move
+					SDL_WarpMouseInWindow(window, event.tfinger.x * w, event.tfinger.y * h);
+					// First finger down event also has to be a motion to that position
+					SDL_PushEvent(&touchEvent);
+					touchEvent.motion.type = SDL_MOUSEBUTTONDOWN;
+					// Now we push the mouse button event
+					SDL_PushEvent(&touchEvent);
+					break;
+				}
+				case SDL_FINGERUP: {
+					SDL_GetWindowSize(window, &w, &h);
+					touchEvent.type = SDL_MOUSEBUTTONUP;
+					touchEvent.button.type = SDL_MOUSEBUTTONUP;
+					touchEvent.button.timestamp = SDL_GetTicks();
+					touchEvent.button.windowID = SDL_GetWindowID(window);
+					touchEvent.button.button = SDL_BUTTON_LEFT;
+					touchEvent.button.state = SDL_RELEASED;
+					touchEvent.button.clicks = 1;
+					touchEvent.button.x = event.tfinger.x * w;
+					touchEvent.button.y = event.tfinger.y * h;
+					SDL_PushEvent(&touchEvent);
+					break;
+				}
+				case SDL_MOUSEMOTION: {
+					mx = (float)event.motion.x;
+					my = (float)event.motion.y;
+				}
 			}
+#endif
 		}
 
 		paintGL();

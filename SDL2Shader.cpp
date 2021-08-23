@@ -429,8 +429,8 @@ int main(int argc, char *argv[])
 							glPixelStorei(GL_PACK_ROW_LENGTH, 0);
 							glPixelStorei(GL_PACK_SKIP_ROWS, 0);
 							glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
-							glReadPixels(0, 0, width, height, GL_BGRA_EXT, GL_UNSIGNED_BYTE, &buffer);
-							screenshot_surface = SDL_CreateRGBSurfaceFrom(buffer, width, height, 32, width * 4, rmask, gmask, bmask, amask);
+							glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, &buffer);
+							screenshot_surface = SDL_CreateRGBSurfaceFrom(buffer, width, height, 32, width * 4, bmask, gmask, rmask, amask);
 							SDL_SaveBMP(flip_vertical(screenshot_surface), "screenshot.bmp");
 							SDL_FreeSurface(screenshot_surface);
 							fprintf(stdout, "Screenshot saved\n");

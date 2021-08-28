@@ -327,7 +327,7 @@ void main()
     
     float A = 3.0;  // In this line A is set to 3.0 ... the problem is solved if you set A to 2.9999
     
-    gl_FragCoord.x/iResolution.x >.5 ? s = 1.0/3.0 : s = 1.0/A;  // Isn't A = 3.0 ?? Why on my iMac is the left side bright??
+    gl_FragCoord.x/iResolution.x >.5 ? (s = 1.0/3.0) : (s = 1.0/A);  // Isn't A = 3.0 ?? Why on my iMac is the left side bright??
     
     for (x=-.5; x<.5; x+=s) for (y=-.5; y<.5; y+=s) o += fC(vec2(x,y)+gl_FragCoord.xy);
         

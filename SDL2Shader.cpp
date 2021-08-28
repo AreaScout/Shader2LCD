@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <iostream>
-#include <ctime>
+#include <chrono>
 #include <SOIL/SOIL.h>
 #include <string>
 #include <sys/time.h>
@@ -19,7 +19,6 @@
 
 std::string _fragmentShader;
 std::string _textureName;
-timeval     _startTime;
 
 GLuint      _texture0;
 
@@ -29,6 +28,7 @@ GLint       _attribute_coord2d;
 
 bool bInvertY = false;
 bool bNeedsUpload = true;
+int64_t initialTime;
 float mx = 0., my = 0., mdx = 0., mdy = 0.;
 uint32_t rmask = 0x00ff0000, gmask = 0x0000ff00, bmask = 0x000000ff, amask = 0xff000000;
 
@@ -203,17 +203,7 @@ void initializeGL()
 	glClearColor(1, 1, 1, 1);
 
 	// Start timer
-	gettimeofday(&_startTime, NULL);
-}
-
-float getDeltaTimeS()
-{
-	timeval currentTime;
-	gettimeofday(&currentTime, NULL);
-
-	float deltaTime = (currentTime.tv_sec - _startTime.tv_sec); 
-	deltaTime += (currentTime.tv_usec - _startTime.tv_usec) / 1000000.0; // us to s
-	return deltaTime;
+	initialTime = static_cast<int64_t>(std::chrono::duration<double>(std::chrono::high_resolution_clock::now().time_since_epoch()).count() * 1000.0);
 }
 
 void paintGL()
@@ -233,8 +223,8 @@ void paintGL()
 	GLint unif_resolution, unif_time, unif_tex0, unif_date, unif_mouse;
 
 	unif_time = glGetUniformLocation(_program, "time");
-	float deltaTimeS = getDeltaTimeS();
-	glUniform1f(unif_time, deltaTimeS);  
+	int64_t intt = static_cast<int64_t>(std::chrono::duration<double>(std::chrono::high_resolution_clock::now().time_since_epoch()).count() * 1000.0) - initialTime;
+	glUniform1f(unif_time, static_cast<float>(intt / 1000.0f));
 
 	unif_resolution = glGetUniformLocation(_program, "resolution");
 	glUniform2f(unif_resolution, (float)width, (float)height);

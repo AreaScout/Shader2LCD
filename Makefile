@@ -12,6 +12,8 @@ Shader2LCD: SDL2Shader.cpp
 	$(CXX) -o Shader2LCD SDL2Shader.cpp -lSDL2 -lGLESv2 -lSOIL $(CXXFLAGS)
 native: SDL2Shader.cpp
 	$(CXX) -o Shader2Monitor SDL2Shader.cpp -lSDL2 -lGLESv2 -lSOIL $(CXXFLAGS) -DNATIVE=1
+macos: SDL2Shader.cpp
+	$(CXX) -o Shader2Monitor SDL2Shader.cpp -lSDL2 -framework OpenGL -I /opt/local/include/ -L /opt/local/lib -DNATIVE=1
 clean:
 	rm -f Shader2LCD Shader2Monitor
 

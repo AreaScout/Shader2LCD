@@ -45,11 +45,11 @@ vec3 aColor = vec3(0);
 
 const vec2 vFontSize  = vec2(8.0, 15.0);  // multiples of 4x5 work best
 
-//----- access to the image of ascii code characters ------
+//----- access to the image of ascii code char_acters ------
 
 #define SPACE tp.x-=FONT_SPACE;
 
-#define S(a) c+=char(a);   tp.x-=FONT_SPACE;
+#define S(a) c+=char_(a);   tp.x-=FONT_SPACE;
 
 #define _note  S(10);   //
 #define _star  S(28);   // *
@@ -135,9 +135,9 @@ const vec2 vFontSize  = vec2(8.0, 15.0);  // multiples of 4x5 work best
 #define _z S(122);
 
 //----------------------------------------------------------
-// return font image intensity of character ch at text position tp
+// return font image intensity of char_acter ch at text position tp
 //----------------------------------------------------------
-float char(int ch)
+float char_(int ch)
 {
   //vec4 f = texture(iChannel0,clamp(tp,0.,1.)/16.+fract(floor(vec2(ch,15.999-float(ch)/16.))/16.));
   vec4 f = any(lessThan(vec4(tp,1,1), vec4(0,0,tp)))
@@ -158,7 +158,7 @@ float drawFract(int digits, float fn)
   fn = fract(fn) * 10.0;
   for (int i = 1; i < 60; i++)
   {
-    c += char(48 + int(fn)); // add 0..9
+    c += char_(48 + int(fn)); // add 0..9
     tp.x -= FONT_SPACE;
     digits -= 1;
     fn = fract(fn) * 10.0;
@@ -178,7 +178,7 @@ float drawInt(int val, int minDigits)
   { val = -val;
     if (minDigits < 1) minDigits = 1;
     else minDigits--;
-    _sub                   // add minus char
+    _sub                   // add minus char_
   }
   for (int n=0; n<10; n++)
   {
@@ -191,7 +191,7 @@ float drawInt(int val, int minDigits)
   for (int n=1; n < 11; n++)
   {
     tp.x += FONT_SPACE; // space
-    c += char(48 + (val-((val/=10)*10))); // add 0..9
+    c += char_(48 + (val-((val/=10)*10))); // add 0..9
     if (n >= digits) break;
   }
   tp.x -= FONT_SPACE * float(digits);
@@ -205,12 +205,12 @@ float drawFloat(float fn, int prec, int maxDigits)
   float c = 0.;
   if (fn < 0.0)
   {
-    c = char(45); // write minus sign
+    c = char_(45); // write minus sign
     fn = -fn;
   }
   tp.x -= FONT_SPACE;
   c += drawInt(int(fn),1);
-  c += char(46); SPACE; // add dot
+  c += char_(46); SPACE; // add dot
   c += drawFract(prec, fract(fn));
   tp.x = min(tp.x, tpx);
   return c;

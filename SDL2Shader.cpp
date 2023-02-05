@@ -1,21 +1,33 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <iostream>
-#include <chrono>
-#include <SOIL/SOIL.h>
-#include <string>
-#include <sys/time.h>
-#include <fcntl.h>
-#include <sys/mman.h>
-#include <algorithm>
-
+#if defined(__GNUC__)
 #define GL_GLEXT_PROTOTYPES 1
-
-#include <SDL2/SDL.h>
+#if !defined(NATIVE)
+#include <sys/mman.h>
+#endif
+#include <unistd.h>
 #include <SDL2/SDL_opengles2.h>
 #include <GLES3/gl3.h>
 #include <GLES3/gl31.h>
+#else
+#define WIN32_LEAN_AND_MEAN
+#define _access access
+#define main SDL_main
+#include <Windows.h>
+#include <GL/GL.h>
+#include <io.h>
+#include "GL/glext.h"
+#include "GL/gl_stubs.h"
+#endif
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+#include <chrono>
+#include <string>
+#include <fcntl.h>
+#include <algorithm>
+extern "C" {
+#include <SOIL/SOIL.h>
+#include <SDL2/SDL.h>
+}
 
 std::string _fragmentShader;
 std::string _textureName;
@@ -120,13 +132,13 @@ GLuint create_shader(const char* filename, GLenum type)
 		: ""
 		,
 		source };
-		glShaderSource(res, 3, sources, NULL);
-		free((void*)source);
+	glShaderSource(res, 3, sources, NULL);
+	free((void*)source);
 
-		glCompileShader(res);
-		GLint compile_ok = GL_FALSE;
-		glGetShaderiv(res, GL_COMPILE_STATUS, &compile_ok);
-		if (compile_ok == GL_FALSE) {
+	glCompileShader(res);
+	GLint compile_ok = GL_FALSE;
+	glGetShaderiv(res, GL_COMPILE_STATUS, &compile_ok);
+	if (compile_ok == GL_FALSE) {
 		fprintf(stderr, "%s:", filename);
 		print_log(res);
 		glDeleteShader(res);
@@ -304,7 +316,9 @@ bool cmdOptionExists(char** begin, char** end, const std::string& option)
 {
 	return std::find(begin, end, option) != end;
 }
-
+#if defined(WIN32)
+#undef main
+#endif
 int main(int argc, char *argv[])
 {
 	PFNGLGETSTRINGPROC glGetStringAPI = NULL;
@@ -335,6 +349,7 @@ int main(int argc, char *argv[])
 	uint32_t rmask16 = 0x0000f800, gmask16 = 0x000007e0, bmask16 = 0x0000001f, amask16 = 0x00000000;
 	int fd;
 	int pxlength;
+	int flags;
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
@@ -350,15 +365,27 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
+#if defined(WIN32) || defined (__APPLE__)
+	width  = 1280;
+	height = 720;
+#else
 	width  = mode.w;
 	height = mode.h;
 #endif
+#endif
 
 #if defined(NATIVE)
-	window = SDL_CreateWindow("Shader2LCD", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP);
+	flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP;
 #else
-	window = SDL_CreateWindow("Shader2LCD", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_MINIMIZED | SDL_WINDOW_BORDERLESS | SDL_WINDOW_HIDDEN);
+	flags = SDL_WINDOW_OPENGL | SDL_WINDOW_MINIMIZED | SDL_WINDOW_BORDERLESS | SDL_WINDOW_HIDDEN;
 #endif
+
+#if defined(WIN32) || defined (__APPLE__)
+	flags &= ~SDL_WINDOW_FULLSCREEN_DESKTOP;
+#endif
+
+	window = SDL_CreateWindow("Shader2LCD", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
+
 	if (!window) {
 		fprintf(stderr, "Error: failed to create window: %s\n", SDL_GetError());
 		return -1;
@@ -383,6 +410,10 @@ int main(int argc, char *argv[])
 	fprintf(stdout, "Version      : %s\n", glGetStringAPI(GL_VERSION));
 	fprintf(stdout, "GLSL Version : %s\n", glGetStringAPI(GL_SHADING_LANGUAGE_VERSION));
 	fprintf(stdout, "Extensions   : %s\n", glGetStringAPI(GL_EXTENSIONS));
+
+#if defined(WIN32)
+	loadOpenGLFunctions();
+#endif
 
 	initializeGL();
 
@@ -413,17 +444,29 @@ int main(int argc, char *argv[])
 					switch (event.key.keysym.sym) {
 						case SDLK_p:
 						case SDLK_PRINTSCREEN:
-							uint8_t buffer[width * height * 4] = {0};
+							char tmp[255] = { 0 };
+							while (1)
+							{
+								static int iter = 0, mode;
+								sprintf(tmp, "screenshot%d.bmp", iter);
+								if (access(tmp, mode) != -1)
+									iter++;
+								else
+									break;
+							}
+							uint8_t *buffer = (uint8_t*)malloc(width * height * 4);
+							memset(buffer, 0, width * height * 4);
 							glReadBuffer(GL_BACK);
 							glPixelStorei(GL_PACK_ALIGNMENT, 4);
 							glPixelStorei(GL_PACK_ROW_LENGTH, 0);
 							glPixelStorei(GL_PACK_SKIP_ROWS, 0);
 							glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
-							glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, &buffer);
+							glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 							screenshot_surface = SDL_CreateRGBSurfaceFrom(buffer, width, height, 32, width * 4, bmask, gmask, rmask, amask);
-							SDL_SaveBMP(flip_vertical(screenshot_surface), "screenshot.bmp");
+							SDL_SaveBMP(flip_vertical(screenshot_surface), tmp);
 							SDL_FreeSurface(screenshot_surface);
 							fprintf(stdout, "Screenshot saved\n");
+							free(buffer);
 							break;
 					}
 				}

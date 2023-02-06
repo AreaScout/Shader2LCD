@@ -10,14 +10,14 @@ In order to compile on win32 you need a copy of SDL2 and libSOIL
 [libSOIL-x64-dev](https://github.com/AreaScout/Shader2LCD/raw/dep-libs/libSOIL-x64-dev.zip)  
 [SDL2-x64-dev](https://github.com/AreaScout/Shader2LCD/raw/dep-libs/sdl2-x64-dev.zip)  
 
-For simplicity Extract the librarys to your Windows Kit SDK directory:
+For simplicity extract the librarys to your Windows Kit SDK directory:
 
 __Include__ files -> `C:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\um`  
 __Libraries__ -> `C:\Program Files (x86)\Windows Kits\10\Lib\10.0.22000.0\um\x64`  
 
 __10.0.22000.0__ is the current Windows SDK version, you may have a different one
 
-After this the include directory should show contain SDL2 and SOIL folders
+After this the include directory should contain SDL2 and SOIL folders
 ```
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\um\SOIL
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\um\SDL2
@@ -34,7 +34,7 @@ Or if you do have msys2 installed, open up Visual Studio Command Prompt x64, cha
 msys2_shell.cmd -use-full-path -ucrt64
 ```
 
-From the now open msys2 shell change directory to Shader2LCD and type run make 
+From the now open msys2 shell change directory to Shader2LCD and type make
 
 ```
 cd /d/Shader2LCD

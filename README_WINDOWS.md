@@ -22,6 +22,12 @@ After this the include directory should contain SDL2 and SOIL folders
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\um\SOIL
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\um\SDL2
 ```
+You need another header file in order to be able to compile this tool, go to ->  
+https://registry.khronos.org/EGL/api/KHR/khrplatform.h and save the file into a folder called KHR like this:
+```
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\um\KHR
+```
+
 Open up Visual Studio Command Prompt for x64, change the directory to your souce code location and issue this command
 
 ```

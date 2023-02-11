@@ -375,7 +375,7 @@ int main(int argc, char *argv[])
 #endif
 
 #if defined(NATIVE)
-	flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP;
+	flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_RESIZABLE;
 #else
 	flags = SDL_WINDOW_OPENGL | SDL_WINDOW_MINIMIZED | SDL_WINDOW_BORDERLESS | SDL_WINDOW_HIDDEN;
 #endif
@@ -470,6 +470,25 @@ int main(int argc, char *argv[])
 							break;
 					}
 				}
+				case SDL_WINDOWEVENT:
+						switch (event.window.event) {
+							case SDL_WINDOWEVENT_RESIZED:
+								SDL_Log("Window %d resized to %dx%d",
+										event.window.windowID, event.window.data1,
+										event.window.data2);
+								width = event.window.data1;
+								height = event.window.data2;
+								glViewport(0, 0, width, height);
+								break;
+							case SDL_WINDOWEVENT_SIZE_CHANGED:
+								SDL_Log("Window %d size changed to %dx%d",
+										event.window.windowID, event.window.data1,
+										event.window.data2);
+								width = event.window.data1;
+								height = event.window.data2;
+								glViewport(0, 0, width, height);
+								break;
+						}
 				case SDL_FINGERMOTION: {
 					SDL_GetWindowSize(window, &w, &h);
 					touchEvent.type = SDL_MOUSEMOTION;
@@ -481,9 +500,9 @@ int main(int argc, char *argv[])
 					touchEvent.motion.y = event.tfinger.y * h;
 					mdx = event.tfinger.dx * w;
 					mdy = event.tfinger.dy * h;
-
+#if !defined (WIN32) && !defined(__APPLE__)
 					SDL_WarpMouseInWindow(window, event.tfinger.x * w, event.tfinger.y * h);
-
+#endif
 					SDL_PushEvent(&touchEvent);
 					break;
 				}

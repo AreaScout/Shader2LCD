@@ -10,7 +10,7 @@ In order to compile on win32 you need a copy of SDL2 and libSOIL
 [libSOIL-x64-dev](https://github.com/AreaScout/Shader2LCD/raw/dep-libs/libSOIL-x64-dev.zip)  
 [SDL2-x64-dev](https://github.com/AreaScout/Shader2LCD/raw/dep-libs/sdl2-x64-dev.zip)  
 
-For simplicity extract the librarys to your Windows Kit SDK directory:
+For simplicity extract the libraries and include files to your Windows Kit SDK directory:
 
 __Include__ files -> `C:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\um`  
 __Libraries__ -> `C:\Program Files (x86)\Windows Kits\10\Lib\10.0.22000.0\um\x64`  
